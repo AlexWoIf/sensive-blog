@@ -30,15 +30,16 @@ def serialize_post_optimized(post):
         'image_url': post.image.url if post.image else None,
         'published_at': post.published_at,
         'slug': post.slug,
-        'tags': [serialize_tag(tag) for tag in post.tags.all()],
-        'first_tag_title': post.tags.all()[0].title,
+        'tags': [serialize_tag(tag) for tag in post.tags.popular()],
+        'first_tag_title': post.tags.all().first().title,
     }
 
 
 def serialize_tag(tag):
     return {
         'title': tag.title,
-        'posts_with_tag': Post.objects.filter(tags__title=tag).count(),
+        #'posts_with_tag': Post.objects.filter(tags__title=tag).count(),
+        'posts_with_tag': tag.num_posts,
     }
 
 
@@ -55,6 +56,7 @@ def index(request):
     )
 
     most_popular_tags = (Tag.objects.popular()[:5])
+
     context = {
         'most_popular_posts': [
             serialize_post_optimized(post) for post in most_popular_posts
@@ -80,7 +82,7 @@ def post_detail(request, slug):
 
     likes = post.likes.all()
 
-    related_tags = post.tags.all()
+    related_tags = post.tags.popular()
 
     serialized_post = {
         'title': post.title,
