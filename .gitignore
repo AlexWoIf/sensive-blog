@@ -6,6 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+# Исполняемые файлы Windows
+*.com
+*.exe
+
+# Резервные копии
+*.bak
+
 # Distribution / packaging
 .Python
 build/
